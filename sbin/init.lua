@@ -1,4 +1,4 @@
--- The CC-UNIX init script :P --
+-- Basically the CC-UNIX init script :P --
 
 local panic = ...
 
@@ -20,6 +20,7 @@ term.setTextColor(0xFFFFFF)
 kernel.log("Starting init services")
 local initd = fs.list("/etc/init.d")
 for i=1, #initd, 1 do
+  kernel.log("Loading /etc/init.d/" .. initd[i])
   local ok, err = loadfile("/etc/init.d/" .. initd[i])
   if not ok then
     panic("Error " .. err .. " in " .. initd[i])

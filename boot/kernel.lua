@@ -1,7 +1,7 @@
 -- A kernel. --
 -- (c) 2020 Ocawesome101
 
-local KERNEL_VERSION = "Kernel 0.0.1"
+local KERNEL_VERSION = "Open Kernel 0.0.1"
 
 -- Set up proxy stuff
 fs = component.proxy(component.invoke(component.list("eeprom")(), "getData"))
@@ -25,6 +25,8 @@ local ok, err = loadfile("/lib/term.lua")
 if not ok then error(err) end
 ok()
 
+term.clear()
+term.setTextColor(0xFFFFFF)
 term.write("kernel startup: phase 0")
 local x,y = term.getCursorPos()
 term.setCursorPos(1,y+1)
@@ -37,7 +39,12 @@ function write(str)
   for c in str:gmatch(".") do
     x, y = term.getCursorPos()
     if c == "\n" then
-      term.setCursorPos(1, y + 1)
+      if y == h then
+        term.scroll(1)
+        term.setCursorPos(1,y)
+      else
+        term.setCursorPos(1, y + 1)
+      end
     else
       if x == w+1 then
         if y == h then
@@ -66,6 +73,9 @@ end
 local function time() -- Properly format the computer's uptime for printing
   local r = tostring(computer.uptime())
   local c,_ = r:find("%.")
+  if #r > 7 then -- Truncate to 7 characters
+    r = r:sub(1,7)
+  end
   if c < 4 then
     r = string.rep("0",4-c) .. r
   elseif c > 4 then

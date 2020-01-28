@@ -20,7 +20,7 @@ end
 _G.term = {}
 
 function term.clearLine()
-  gpu.set(1,y,(" "):rep(w)) -- (" "):rep(w). If only we could do this to tables....
+  gpu.set(1,y,(" "):rep(w))
   update()
 end
 
@@ -90,7 +90,7 @@ function term.write(str)
 end
 
 function term.scroll(lines)
-  gpu.copy(1,lines+1,w,h,1,1)
+  gpu.copy(1,lines+1,w,h-(lines+1),1,1)
   gpu.fill(h-lines,1,w,lines," ")
-  y = y - lines
+  update()
 end
