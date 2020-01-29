@@ -1,7 +1,7 @@
 -- A kernel. --
 -- (c) 2020 Ocawesome101
 
-local KERNEL_VERSION = "Open Kernel 0.0.1"
+local KERNEL_VERSION = "Open Kernel 0.1.5"
 
 -- Set up proxy stuff
 fs = component.proxy(component.invoke(component.list("eeprom")(), "getData"))
@@ -21,7 +21,7 @@ function loadfile(file)
 end
 
 -- Load convenience stuff
-local ok, err = loadfile("/lib/term.lua")
+local ok, err = loadfile("/boot/libs/term.lua")
 if not ok then error(err) end
 ok()
 
@@ -34,25 +34,28 @@ term.setCursorPos(1,y+1)
 -- Write stuff
 function write(str)
   local str = str or ""
-  local x, y
+  local x, y = term.getCursorPos()
   local w, h = term.getSize()
+  
+  local function newline()
+    if y == h then
+      term.scroll()
+      term.setCursorPos(1,y)
+    else
+      term.setCursorPos(1,y+1)
+    end
+  end
+  
   for c in str:gmatch(".") do
     x, y = term.getCursorPos()
     if c == "\n" then
-      if y == h then
-        term.scroll(1)
-        term.setCursorPos(1,y)
-      else
-        term.setCursorPos(1, y + 1)
-      end
+      newline()
     else
       if x == w+1 then
-        if y == h then
-          term.scroll(1)
-          term.setCursorPos(1, h)
-        else
-          term.setCursorPos(1, y + 1)
-        end
+        newline()
+      elseif y == h then
+        term.scroll()
+        term.setCursorPos(1,y-1)
       end
       term.write(c)
     end
@@ -60,7 +63,7 @@ function write(str)
 end
 
 function print(...)
-  local toPrint = {...}
+  local toPrint = {...} or {""}
   for i=1, #toPrint, 1 do
     write(tostring(toPrint[i]))
     if i < #toPrint then
@@ -73,6 +76,7 @@ end
 local function time() -- Properly format the computer's uptime for printing
   local r = tostring(computer.uptime())
   local c,_ = r:find("%.")
+  local c = c or 4
   if #r > 7 then -- Truncate to 7 characters
     r = r:sub(1,7)
   end
@@ -118,7 +122,7 @@ status("Kernel startup: phase 1")
 status("Initialized loadfile")
 status("Initialized term.*, write(), and print()")
 status("Loading filesystem API from /lib/filesystem.lua")
-local ok, err = loadfile("/lib/filesystem.lua")
+local ok, err = loadfile("/boot/libs/filesystem.lua")
 if not ok then
   panic(err)
 end

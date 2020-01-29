@@ -2,7 +2,12 @@
 
 local panic = ...
 
-local INIT_VERSION = "0.0.1"
+if sh then
+  error("Init is already running!")
+  return false
+end
+
+local INIT_VERSION = "0.1.2"
 
 -- Messy
 write("\n")
@@ -19,18 +24,23 @@ term.setTextColor(0xFFFFFF)
 
 kernel.log("Starting init services")
 local initd = fs.list("/etc/init.d")
+table.sort(initd)
 for i=1, #initd, 1 do
   kernel.log("Loading /etc/init.d/" .. initd[i])
   local ok, err = loadfile("/etc/init.d/" .. initd[i])
   if not ok then
-    panic("Error " .. err .. " in " .. initd[i])
+    panic(err)
   end
   ok()
 end
 
 kernel.log("Starting shell")
-local ok, err = loadfile("/bin/sh.lua")
-if not ok then
-  panic(err)
+while true do
+  local ok, err = loadfile("/bin/sh.lua")
+  if not ok then
+    printError(err)
+    break
+  else
+    ok()
+  end
 end
-ok()
