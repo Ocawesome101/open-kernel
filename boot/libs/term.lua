@@ -18,6 +18,8 @@ end
 
 _G.term = {}
 
+term.connectedGPUs = {}
+
 function term.clearLine()
   gpu.set(1,y,(" "):rep(w))
   update()
@@ -86,6 +88,40 @@ end
 function term.write(str)
   gpu.set(x,y,str)
   x = x + #str
+end
+
+function term.disableGPU(addr) -- Mostly called by the event library when a GPU is removed from the system
+  if gpuAddress == addr then
+    gpu = {
+      set = function()end,
+      maxResolution = function()return 1,1 end,
+      setResolution = function()end,
+      getResolution = function()return 1,1 end,
+      maxDepth = function()return 1 end,
+      getDepth = function()return 1 end,
+      setDepth = function()end,
+      setPaletteColor = function()end,
+      getPaletteColor = function()end,
+      setForeground = function()end,
+      getForeground = function()end,
+      fill = function()end
+    }
+  end
+end
+
+function term.enableGPU(addr)
+  if gpu.maxResolution() == 1 then -- If we don't have a primary GPU, add one
+    gpu = component.proxy(addr)
+  else
+    for i=1, #term.connectedGPUs, 1 do
+      if term.connectedGPUs[i].address then
+        if term.connectedGPUs[i].address() == addr then
+          return true
+        end
+      end
+    end
+    table.insert(term.connectedGPUs, component.proxy(addr))
+  end
 end
 
 function term.scroll()
