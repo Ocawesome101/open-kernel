@@ -2,7 +2,7 @@
 
 shell = {}
 shell.pwd = "/"
-shell.version = "Open Shell 0.1.0"
+shell.version = "Open Shell 0.2.0"
 shell.exit = false
 shell.path = "/bin:/sbin:/usr/bin"
 
@@ -67,12 +67,18 @@ term.setTextColor(colors.white)
 
 pcall(runCommand, "motd")
 
+local tHistory = table.new({""})
+
 while not shell.exit do
   term.setTextColor(colors.red)
   write((network.hostname() or "localhost") .. ": " .. shell.pwd .. "# ")
   term.setTextColor(colors.white)
-  local command = read()
+  local command = read(nil, tHistory)
   if command ~= "" then
+    if #tHistory >= 16 then -- Limit command history to 16 entries. Mostly for memory usage reasons.
+      tHistory:remove(1)
+    end
+    tHistory:insert(command)
     local ok, err = pcall(function()
       runCommand(command)
     end)

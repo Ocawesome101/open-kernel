@@ -7,16 +7,12 @@ if sh then
   return false
 end
 
-local INIT_VERSION = "0.1.2"
-
 -- Messy
 write("\n")
 term.setTextColor(0x6699FF)
 write("  OCInit ")
-term.setTextColor(0x66EE33)
-write(INIT_VERSION)
 term.setTextColor(0xFFFFFF)
-write(" starting up ")
+write("starting up ")
 term.setTextColor(0xFFFF00)
 write(kernel.version().."\n\n")
 term.setTextColor(0xFFFFFF)

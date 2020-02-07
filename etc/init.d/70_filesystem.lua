@@ -1,11 +1,11 @@
 -- Further enhance the filesystem API -- 
 
-fs.makeDirectory("/mnt") -- Ensure that /mnt is there
-
 kernel.log("Getting root filesystem address")
 -- Get the root filesystem address
 local eeprom = component.list("eeprom")()
 local rootfsAddress = component.invoke(eeprom, "getData")
+
+local serialize = require("serialize")
 
 kernel.log("Initializing mount system")
 local mounts = table.new({
@@ -27,28 +27,33 @@ function fs.mount(addr, path)
     ["path"] = path,
     ["addr"] = addr
   })
-end
-
-function fs.unmount(filesystem) -- Supports unmounting by address or by path
-  if filesystem == "/" or rootfsAddress then
-    return false, "Cannot unmount the root filesystem"
-  end
-  for i=1, #mounts, 1 do
-    if mounts[i].path == filesytem then
-      fs.delete("/mnt/" .. mounts[i].path)
-      mounts:remove(i)
-      return true
-    end
-    if mounts[i].addr == filesystem then
-      fs.delete("/mnt/" .. mounts[i].path)
-      mounts:remove(i)
-      return true
-    end
-  end
+  return true
 end
 
 function fs.mounts()
   return mounts
+end
+
+function fs.unmount(filesystem) -- Supports unmounting by address or by path
+  if filesystem == "/" or filesystem == rootfsAddress then
+    return false, "Cannot unmount the root filesystem"
+  end
+  kernel.log(serialize(mounts))
+  for i=1, #mounts, 1 do
+    if mounts[i].path == filesytem then
+      fs.remove(mounts[i].path)
+      kernel.log(mounts[i].path)
+      kernel.log(mounts[i].addr)
+      mounts:remove(i)
+      return true, "Unmounted"
+    end
+    if mounts[i].addr == filesystem then
+      fs.remove(mounts[i].path)
+      mounts:remove(i)
+      return true, "Unmounted"
+    end
+  end
+  return false, "No filesystem mounted at " .. filesystem
 end
 
 function fs.exec(path, operation, ...)

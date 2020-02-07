@@ -8,8 +8,11 @@ for i=32, 126, 1 do
 end
 
 -- @arg @replace: Character with which to replace every character in the entered string.
-function read(replace)
+-- @arg @history: Table of history
+function read(replace, history)
   local str = ""
+  local history = history or {""}
+  local histPos = #history
   local x,y = term.getCursorPos()
   local w,h = term.getSize()
   local function redraw(c)
@@ -37,6 +40,18 @@ function read(replace)
         redraw("") -- No cursor
         term.setCursorPos(1,y+1)
         return str
+      elseif id == 0 then
+        if altid == 208 then -- Down arrow
+          if histPos < #history then
+            histPos = histPos + 1
+            str = history[histPos]
+          end
+        elseif altid == 200 then -- Up arrow
+          if histPos > 1 then
+            histPos = histPos - 1
+            str = history[histPos]
+          end
+        end
       else
         local c = string.char(id)
         for k,v in pairs(acceptedChars) do
