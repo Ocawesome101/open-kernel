@@ -1,9 +1,15 @@
+sbin/
 sbin/init.lua
+lib/
 lib/tokenize.lua
 lib/colors.lua
+lib/motd/
 lib/motd/motdlist.lua
+lib/require/
 lib/require/serialize.lua
+etc/
 etc/hostname.lua
+etc/init.d/
 etc/init.d/00_base.lua
 etc/init.d/10_event.lua
 etc/init.d/20_read.lua
@@ -12,9 +18,12 @@ etc/init.d/40_tables.lua
 etc/init.d/50_require.lua
 etc/init.d/60_networking.lua
 etc/init.d/70_filesystem.lua
+boot/
 boot/kernel.lua
+boot/libs/
 boot/libs/filesystem.lua
 boot/libs/term.lua
+bin/
 bin/shutdown.lua
 bin/sh.lua
 bin/rm.lua
@@ -32,4 +41,5 @@ bin/umount.lua
 bin/mount.lua
 bin/hostname.lua
 bin/get.lua
+usr/bin/
 usr/bin/lua.lua
