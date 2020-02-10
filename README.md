@@ -9,4 +9,4 @@ Now with external FS / floppy support!
 
 I need to make sure GitHub doesn't overwrite this again....
 
-Finally has an installer! It's located at https://pastebin.com/BxmYj0wJ. Note that it should work in Open Kernel.
+Finally has an installer! It's located at https://pastebin.com/BxmYj0wJ. Note that it should work in OpenOS *and* Open Kernel.
