@@ -6,3 +6,5 @@ As of version 0.2.0 (I think), I am proud to say that Open Kernel uses a mere 80
 Now with external FS / floppy support!
 
 I need to make sure GitHub doesn't overwrite this again....
+
+Finally has an installer! It's located at https://pastebin.com/BxmYj0wJ. Note that it should work in Open Kernel.
