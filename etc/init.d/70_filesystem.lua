@@ -1,5 +1,9 @@
 -- Further enhance the filesystem API -- 
 
+if fs.isDir then -- We're probably running on ComputerCraft
+  return
+end
+
 kernel.log("Getting root filesystem address")
 -- Get the root filesystem address
 local eeprom = component.list("eeprom")()
