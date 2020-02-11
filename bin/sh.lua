@@ -4,7 +4,7 @@ shell = {}
 local pwd = "/"
 shell.pwd = function()return pwd end
 shell.setPwd = function(new)pwd = new or "/" end
-shell.version = function() return "Open Shell 0.3.0" end
+shell.version = function() return "Open Shell 0.3.1" end
 local exit = false
 shell.exit = function() exit = true end
 shell.path = function() return "/bin:/sbin:/usr/bin" end
@@ -19,8 +19,8 @@ function shell.resolvePath(path, strict)
     if fs.exists(path) or not strict then
       return path
     end
-  elseif fs.exists(shell.pwd .. "/" .. path) or not strict then
-    if shell.pwd:sub(-1) == "/" then
+  elseif fs.exists(shell.pwd() .. "/" .. path) or not strict then
+    if shell.pwd():sub(-1) == "/" then
       return shell.pwd() .. path
     else
       return shell.pwd() .. "/" .. path
