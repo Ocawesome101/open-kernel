@@ -1,3 +1,3 @@
 -- EXIT --
 
-shell.exit = true 
+shell.exit()

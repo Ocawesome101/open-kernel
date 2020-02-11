@@ -1,3 +1,3 @@
 -- pwd --
 
-print(shell.pwd) 
+print(shell.pwd())

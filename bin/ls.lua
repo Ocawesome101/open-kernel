@@ -2,7 +2,7 @@
 
 local args = {...}
 
-local listDir = shell.pwd
+local listDir = shell.pwd()
 
 local fileColor = colors.white
 local scriptColor = colors.green

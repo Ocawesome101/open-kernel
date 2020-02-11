@@ -1,7 +1,7 @@
 -- A kernel. --
 -- (c) 2020 Ocawesome101
 
-local KERNEL_VERSION = "Open Kernel 0.2.5"
+local KERNEL_VERSION = "Open Kernel 0.3.0"
 
 -- Set up proxy stuff
 fs = component.proxy(component.invoke(component.list("eeprom")(), "getData"))

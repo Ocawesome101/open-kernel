@@ -1,29 +1,32 @@
 -- A shell. Just that, nothing more. --
 
 shell = {}
-shell.pwd = "/"
-shell.version = "Open Shell 0.2.5"
-shell.exit = false
-shell.path = "/bin:/sbin:/usr/bin"
+local pwd = "/"
+shell.pwd = function()return pwd end
+shell.setPwd = function(new)pwd = new or "/" end
+shell.version = function() return "Open Shell 0.3.0" end
+local exit = false
+shell.exit = function() exit = true end
+shell.path = function() return "/bin:/sbin:/usr/bin" end
 
 local tokenize = require("tokenize")
 
 function shell.resolvePath(path, strict)
   if path == ".." then
     printError("You cannot do that.")
-    return shell.pwd
+    return shell.pwd()
   elseif path:sub(1,1) == "/" then
     if fs.exists(path) or not strict then
       return path
     end
   elseif fs.exists(shell.pwd .. "/" .. path) or not strict then
     if shell.pwd:sub(-1) == "/" then
-      return shell.pwd .. path
+      return shell.pwd() .. path
     else
-      return shell.pwd .. "/" .. path
+      return shell.pwd() .. "/" .. path
     end
   else
-    return shell.pwd
+    return shell.pwd()
   end
 end
 
@@ -32,13 +35,13 @@ local function runCommand(...)
   local toExec = ""
   local words = tokenize(cmd)
   local head = words[1]:sub(1,1)
-  local paths = tokenize(shell.path, ":")
+  local paths = tokenize(shell.path(), ":")
   for i=1, #paths, 1 do
     if fs.exists(paths[i] .. "/" .. words[1] .. ".lua") then
       toExec = paths[i] .. "/" .. words[1] .. ".lua"
     end
   end
-  if head == "/" then
+  if head == "/" or head == "." then
     toExec = words[1]
   end
   if toExec == "" then
@@ -62,16 +65,16 @@ term.setCursorPos(1,1)
 
 write("Welcome to ")
 term.setTextColor(colors.lightBlue)
-print(shell.version)
+print(shell.version())
 term.setTextColor(colors.white)
 
 pcall(runCommand, "motd")
 
 local tHistory = table.new({""})
 
-while not shell.exit do
+while not exit do
   term.setTextColor(colors.red)
-  write((network.hostname() or "localhost") .. ": " .. shell.pwd .. "# ")
+  write((network.hostname() or "localhost") .. ": " .. shell.pwd() .. "# ")
   term.setTextColor(colors.white)
   local command = read(nil, tHistory)
   if command ~= "" then
