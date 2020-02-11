@@ -8,15 +8,15 @@ if #args < 1 then
 end
 
 for i=1, #args, 1 do
-  if fs.exists(shell.resolvePath(args[1])) then
-    write("Really delete " .. args[1] .. "? [y/n] ")
+  if fs.exists(shell.resolvePath(args[i])) then
+    write("Really delete " .. args[i] .. "? [y/n] ")
     local yn = read()
     if yn:lower() == "y" then
-      fs.remove(shell.resolvePath(args[1]))
+      fs.remove(shell.resolvePath(args[i]))
     else
       print("Skipping")
     end
   else
-    printError(args[1] .. ": No such file")
+    printError(args[i] .. ": No such file")
   end
 end
