@@ -86,6 +86,11 @@ function fs.open(path, mode, returnHandle)
   if not handle then
     return false
   end
+
+  function rtn.close()
+    fs.close(handle)
+    rtn = nil
+  end
   
   if mode == "r" or mode == "rw" or mode == "a" then
     function rtn.read(amount)
@@ -98,9 +103,6 @@ function fs.open(path, mode, returnHandle)
         buffer = buffer .. (data or "")
       until not data
       return buffer
-    end
-    function rtn.close()
-      fs.close(handle)
     end
   end
   
@@ -163,8 +165,14 @@ fs.delete = fs.remove -- I'm used to the CraftOS version and I think delete make
 fs.delete("/mnt")
 
 fs.makeDirectory("/mnt")
+if not fs.exists("/tmp") then
+  fs.makeDirectory("/tmp")
+end
 
 kernel.log("Mounting external filesystems")
 for addr, ctype in component.list("filesystem") do
   fs.mount(addr)
+  if fs.getLabel(addr) == "tmpfs" then
+    fs.mount(addr, "/tmp")
+  end
 end
