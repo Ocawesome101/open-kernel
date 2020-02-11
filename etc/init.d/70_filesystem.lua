@@ -38,21 +38,19 @@ function fs.mounts()
   return mounts
 end
 
+local remove = fs.remove
 function fs.unmount(filesystem) -- Supports unmounting by address or by path
   if filesystem == "/" or filesystem == rootfsAddress then
     return false, "Cannot unmount the root filesystem"
   end
-  kernel.log(serialize(mounts))
   for i=1, #mounts, 1 do
-    if mounts[i].path == filesytem then
-      fs.remove(mounts[i].path)
-      kernel.log(mounts[i].path)
-      kernel.log(mounts[i].addr)
+    if mounts[i].path == filesystem then
+      remove(mounts[i].path)
       mounts:remove(i)
       return true, "Unmounted"
     end
     if mounts[i].addr == filesystem then
-      fs.remove(mounts[i].path)
+      remove(mounts[i].path)
       mounts:remove(i)
       return true, "Unmounted"
     end
