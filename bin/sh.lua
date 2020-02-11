@@ -2,7 +2,7 @@
 
 shell = {}
 shell.pwd = "/"
-shell.version = "Open Shell 0.2.0"
+shell.version = "Open Shell 0.2.5"
 shell.exit = false
 shell.path = "/bin:/sbin:/usr/bin"
 
