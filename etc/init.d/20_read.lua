@@ -11,6 +11,7 @@ end
 -- @arg @history: Table of history
 function read(replace, history)
   local str = ""
+  local cursorPos = #str
   local history = history
   if not history then
     history = {""}
@@ -30,17 +31,29 @@ function read(replace, history)
       term.write(str)
     end
     -- Simulate a cursor since the term API is apparently not capable of doing so
-    local oldColor = term.getBackgroundColor()
-    term.setBackgroundColor(colors.white)
-    term.write(c)
-    term.setBackgroundColor(oldColor)
+    if c ~= "" then
+      local oldColor = term.getBackgroundColor()
+      local oldTextColor = term.getTextColor()
+      term.setBackgroundColor(colors.white)
+      term.setTextColor(colors.black)
+      term.setCursorPos(x + cursorPos, y)
+      local char = gpu.get(x + cursorPos, y)
+      term.write(char)
+      term.setBackgroundColor(oldColor)
+      term.setTextColor(oldTextColor)
+    end
   end
   while true do
     redraw(cursor)
     local event, _, id, altid = event.pull()
     if event == "key_down" then
       if id == 8 then -- Backspace
-        str = str:sub(1,#str-1)
+        if cursorPos > 0 then
+          str = str:sub(1,cursorPos - 1) .. str:sub(cursorPos+1, #str)
+        end
+        if cursorPos >= 1 then
+          cursorPos = cursorPos - 1
+        end
       elseif id == 13 then -- Enter
         redraw("") -- No cursor
         term.setCursorPos(1,y+1)
@@ -51,11 +64,21 @@ function read(replace, history)
           if histPos < #history then
             histPos = histPos + 1
             str = history[histPos]
+            cursorPos = #str
           end
         elseif altid == 200 then -- Up arrow
           if histPos > 1 then
             histPos = histPos - 1
             str = history[histPos]
+            cursorPos = #str
+          end
+        elseif altid == 203 then
+          if cursorPos > 0 then
+            cursorPos = cursorPos - 1
+          end
+        elseif altid == 205 then
+          if cursorPos < #str then
+            cursorPos = cursorPos + 1
           end
         end
       else
@@ -63,7 +86,8 @@ function read(replace, history)
         for k,v in pairs(acceptedChars) do
           if k == c then
             write(replace or c)
-            str = str .. c
+            str = str:sub(1, cursorPos) .. c .. str:sub(cursorPos+1, #str)
+            cursorPos = cursorPos + 1
             break
           end
         end
