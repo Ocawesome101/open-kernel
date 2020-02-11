@@ -32,11 +32,11 @@ function read(replace, history)
     end
     -- Simulate a cursor since the term API is apparently not capable of doing so
     if c ~= "" then
+      term.setCursorPos(x + cursorPos, y)
       local oldColor = term.getBackgroundColor()
       local oldTextColor = term.getTextColor()
-      term.setBackgroundColor(colors.white)
+      term.setBackgroundColor(oldTextColor)
       term.setTextColor(colors.black)
-      term.setCursorPos(x + cursorPos, y)
       local char = gpu.get(x + cursorPos, y)
       term.write(char)
       term.setBackgroundColor(oldColor)
