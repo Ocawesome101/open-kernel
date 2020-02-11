@@ -10,7 +10,7 @@ end
 local path = shell.resolvePath(args[1])
 
 if not fs.isDirectory(path) then
-  local handle = fs.open(path)
+  local handle = fs.open(path, "r") -- Mode is important
   local data = handle.readAll()
   handle.close()
   print(data)
