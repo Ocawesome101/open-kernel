@@ -11,7 +11,12 @@ end
 -- @arg @history: Table of history
 function read(replace, history)
   local str = ""
-  local history = history or {""}
+  local history = history
+  if not history then
+    history = {""}
+  else
+    table.insert(history, "")
+  end
   local histPos = #history
   local x,y = term.getCursorPos()
   local w,h = term.getSize()
@@ -39,6 +44,7 @@ function read(replace, history)
       elseif id == 13 then -- Enter
         redraw("") -- No cursor
         term.setCursorPos(1,y+1)
+        table.remove(history, #history)
         return str
       elseif id == 0 then
         if altid == 208 then -- Down arrow
