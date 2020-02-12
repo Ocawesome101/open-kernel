@@ -25,6 +25,8 @@ boot/libs/
 boot/libs/filesystem.lua
 boot/libs/term.lua
 bin/
+bin/eeprom.lua
+bin/label.lua
 bin/shutdown.lua
 bin/sh.lua
 bin/rm.lua
