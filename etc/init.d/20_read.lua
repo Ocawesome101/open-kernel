@@ -30,7 +30,7 @@ function read(replace, history)
     else
       term.write(str)
     end
-    -- Simulate a cursor since the term API is apparently not capable of doing so
+    -- Simulate a cursor since I can't get the term API to do it
     if c ~= "" then
       term.setCursorPos(x + cursorPos, y)
       local oldColor = term.getBackgroundColor()
@@ -53,6 +53,10 @@ function read(replace, history)
         end
         if cursorPos >= 1 then
           cursorPos = cursorPos - 1
+        end
+      elseif id == 127 then -- Delete
+        if cursorPos < #str then
+          str = str:sub(1, cursorPos) .. str:sub(cursorPos+2, #str)
         end
       elseif id == 13 then -- Enter
         redraw("") -- No cursor
@@ -92,6 +96,9 @@ function read(replace, history)
           end
         end
       end
+    elseif event == "clipboard" then
+      str = str .. id
+      cursorPos = #str
     end
   end
 end
