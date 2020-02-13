@@ -20,6 +20,9 @@ local mounts = table.new({
 })
 
 function fs.mount(addr, path)
+  if addr:find("/") then
+    return false
+  end
   local path = path or "/mnt/"..addr:sub(1,3)
   for i=1, #mounts, 1 do
     if mounts[i].path == path then
@@ -142,6 +145,25 @@ function fs.rename(source, destination)
   return fs.exec(path, "rename", source, destination)
 end
 
+fs.move = fs.rename
+
+function fs.copy(source, destination) -- Why on earth do we not have this by default?
+  if fs.isDirectory(source) then
+    fs.makeDirectory(destination)
+    local files = fs.list(source)
+    for i=1, #files, 1 do
+      fs.copy(source .. "/" .. files[i], destination .. "/" .. files[i])
+    end
+  else
+    local inHandle = fs.open(source, "r")
+    local inData = inHandle.readAll()
+    inHandle.close()
+    local outHandle = fs.open(destination, "w")
+    outHandle.write(inData)
+    outHandle.close()
+  end
+end
+
 function fs.lastModified(path)
   return fs.exec(path, "lastModified", path)
 end
@@ -171,8 +193,9 @@ end
 
 kernel.log("Mounting external filesystems")
 for addr, ctype in component.list("filesystem") do
-  fs.mount(addr)
   if fs.getLabel(addr) == "tmpfs" then
     fs.mount(addr, "/tmp")
+  elseif addr ~= rootfsAddress then
+    fs.mount(addr)
   end
 end
