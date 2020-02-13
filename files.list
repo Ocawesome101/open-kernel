@@ -32,6 +32,8 @@ bin/sh.lua
 bin/rm.lua
 bin/pwd.lua
 bin/motd.lua
+bin/cp.lua
+bin/mv.lua
 bin/mkdir.lua
 bin/ls.lua
 bin/free.lua
