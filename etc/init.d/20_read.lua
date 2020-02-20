@@ -23,12 +23,12 @@ function read(replace, history)
   local w,h = term.getSize()
   local function redraw(c)
     term.setCursorPos(x,y)
-    term.write((" "):rep(w - x))
+    write((" "):rep(w - x))
     term.setCursorPos(x,y)
     if replace then
-      term.write(replace:rep(#str))
+      write(replace:rep(#str))
     else
-      term.write(str)
+      write(str)
     end
     -- Simulate a cursor since I can't get the term API to do it
     if c ~= "" then
@@ -38,7 +38,7 @@ function read(replace, history)
       term.setBackgroundColor(oldTextColor)
       term.setTextColor(colors.black)
       local char = gpu.get(x + cursorPos, y)
-      term.write(char)
+      write(char)
       term.setBackgroundColor(oldColor)
       term.setTextColor(oldTextColor)
     end
