@@ -1,7 +1,7 @@
 -- A kernel. --
 -- (c) 2020 Ocawesome101
 
-local KERNEL_VERSION = "Open Kernel 0.3.0"
+local KERNEL_VERSION = "Open Kernel 0.5.0"
 
 -- Set up proxy stuff
 fs = component.proxy(component.invoke(component.list("eeprom")(), "getData"))
@@ -73,8 +73,9 @@ function print(...)
   write("\n")
 end
 
+local uptime = computer.uptime
 local function time() -- Properly format the computer's uptime for printing
-  local r = tostring(computer.uptime())
+  local r = tostring(uptime())
   local c,_ = r:find("%.")
   local c = c or 4
   if #r > 7 then -- Truncate to 7 characters

@@ -4,8 +4,10 @@ local args = {...}
 
 local pastebin = "https://pastebin.com/raw/"
 
+local internet = require("internet")
+
 if not internet then
-  error("This progran requires an internet card.")
+  error("This program requires an internet card.")
 end
 
 local function downloadHandle(code)

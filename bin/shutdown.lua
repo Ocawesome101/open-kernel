@@ -2,6 +2,8 @@
 
 local args = {...} 
 
+local computer = require("computer")
+
 if #args < 1 then
   error("usage: shutdown -s|-r")
   return false

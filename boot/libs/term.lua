@@ -12,8 +12,9 @@ local x,y = 1,1
 gpu.setResolution(w,h)
 local cursorVisible = false
 
+local pullSignal = computer.pullSignal
 local function update() -- Force a screen refresh
-  computer.pullSignal(0)
+  pullSignal(0)
 end
 
 _G.term = {}
@@ -78,7 +79,8 @@ function term.setSize(newW,newH)
 end
 
 function term.getSize()
-  return gpu.getResolution()
+  local w,h = gpu.getResolution()
+  return w,h
 end
 
 function term.maxSize()
