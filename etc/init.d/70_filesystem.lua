@@ -4,6 +4,8 @@ if fs.isDir then -- We're probably running on ComputerCraft
   return
 end
 
+local component = require("component")
+
 kernel.log("Getting root filesystem address")
 -- Get the root filesystem address
 local eeprom = component.list("eeprom")()

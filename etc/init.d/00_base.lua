@@ -7,9 +7,11 @@ if not ok then
 end
 ok()
 
+local uptime, pullSignal = computer.uptime, computer.pullSignal
+
 function sleep(time)
-  local done = computer.uptime() + time
+  local done = uptime() + time
   repeat
-    computer.pullSignal(time - computer.uptime())
-  until computer.uptime() >= done
+    pullSignal(time - uptime())
+  until uptime() >= done
 end

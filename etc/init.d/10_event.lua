@@ -35,14 +35,30 @@ function event.removeListener(event)
   end
 end
 
-function event.pull(filter)
-  local data = {computer.pullSignal()}
-  if event.listeners[data[1]] then -- Support primitive event listeners
-    event.listeners[data[1]](table.unpack(data, 2, data.n))
+local pullSignal = computer.pullSignal
+
+function event.pull(filter, timeout)
+  if timeout then
+    local data = {pullSignal(timeout)}
+    if event.listeners[data[1]] then -- Support event listeners
+      event.listeners[data[1]](table.unpack(data, 2, data.n))
+    end
+    if data[1] == filter then
+      return table.unpack(data)
+    elseif not filter then
+      return table.unpack(data)
+    end
+    return
   end
-  if data[1] == filter then
-    return table.unpack(data)
-  elseif not filter then
-    return table.unpack(data)
+  while true do
+    local data = {pullSignal()}
+    if event.listeners[data[1]] then -- Support event listeners
+      event.listeners[data[1]](table.unpack(data, 2, data.n))
+    end
+    if data[1] == filter then
+      return table.unpack(data)
+    elseif not filter then
+      return table.unpack(data)
+    end
   end
 end
