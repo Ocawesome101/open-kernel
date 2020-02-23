@@ -6,7 +6,7 @@ if #args < 1 then
   return error("usage: wget URL [FILE]")
 end
 
-local internet = require("internet")
+local internet = internet or require("internet")
 local tokenize = require("tokenize")
 
 if not internet then
