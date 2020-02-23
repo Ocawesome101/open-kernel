@@ -16,7 +16,7 @@ etc/init.d/10_event.lua
 etc/init.d/20_read.lua
 etc/init.d/30_errors.lua
 etc/init.d/40_tables.lua
-etc/init.d/50_require.lua
+etc/init.d/50_modules.lua
 etc/init.d/60_networking.lua
 etc/init.d/70_filesystem.lua
 boot/
