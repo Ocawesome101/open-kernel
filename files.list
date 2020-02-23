@@ -47,5 +47,6 @@ bin/mount.lua
 bin/hostname.lua
 bin/get.lua
 bin/pastebin.lua
+bin/wget.lua
 usr/bin/
 usr/bin/lua.lua
