@@ -10,7 +10,7 @@ shell.exit = function() exit = true end
 shell.path = function() return "/bin:/sbin:/usr/bin" end
 
 local tokenize = require("tokenize")
-local network = require("network")
+local network = network or require("network")
 
 function shell.resolvePath(path, strict)
   if path == ".." then
