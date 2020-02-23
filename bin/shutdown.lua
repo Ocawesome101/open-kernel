@@ -2,7 +2,7 @@
 
 local args = {...} 
 
-local computer = require("computer")
+local computer = computer or require("computer")
 
 if #args < 1 then
   error("usage: shutdown -s|-r")
