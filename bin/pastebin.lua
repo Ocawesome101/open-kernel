@@ -4,7 +4,7 @@ local args = {...}
 
 local pastebin = "https://pastebin.com/raw/"
 
-local internet = require("internet")
+local internet = internet or require("internet")
 
 if not internet then
   error("This program requires an internet card.")
