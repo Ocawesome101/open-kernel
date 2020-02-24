@@ -35,21 +35,27 @@ function os.spawn(name, process)
   end
   counter = counter + 1
   local pid = counter
+  kernel.log("Spawning process " .. tostring(pid) .. " with name " .. name)
   tasks[pid] = {pid = pid, id = name, coro = coro}
   return pid
 end
 
 function os.kill(pid)
+  if pid == 0 or pid == 1 then
+    return false, "Cannot kill a system process"
+  end
+  kernel.log("Killing process " .. tostring(pid))
   if tasks[pid].pid == pid then
-    tasks:remove(pid)
+    tasks[pid] = nil
     return true
   end
-  for i=1, #tasks, 1 do
+  for i,v in pairs(tasks) do
     if tasks[i].pid == pid then
-      tasks:remove(i)
+      tasks[i] = nil
       return true
     end
   end
+  kernel.log("No such process")
   return false, "No such process"
 end
 
@@ -58,19 +64,19 @@ function os.info(task)
   if not task then
     local r = table.new()
     for i=1, #tasks, 1 do
-      r:insert({pid = tasks[i].pid, name = tasks[i].name})
+      r:insert({pid = tasks[i].pid, name = tasks[i].id})
     end
     return r
   elseif type(task) == "number" then
     for i=1, #tasks, 1 do
       if tasks[i].pid == task then
-        return {pid = tasks[i].pid, name = tasks[i].name}
+        return {pid = tasks[i].pid, name = tasks[i].id}
       end
     end
   else
     for i=1, #tasks, 1 do
       if tasks[i].name == task then
-        return {pid = tasks[i].pid, name = tasks[i].name}
+        return {pid = tasks[i].pid, name = tasks[i].id}
       end
     end
   end
@@ -80,21 +86,23 @@ end
 function os.start()
   local eventData = {n = 0}
   local filters = table.new()
-  for i=1, #tasks, 1 do
-    if tasks[i].coro then
-      if filters[i] == nil or filters[i] == eventData[1] or filters[i] == "" then
-        local ok, param = coroutine.resume(tasks[i].coro, table.unpack(eventData))
-        if not ok then
-          kernel.log("Task " .. (tasks[i].id or tostring(tasks[i].pid) or tostring(i)) .. " died: " .. param)
-          tasks:remove(i)
-          if filters[i] then
-            filters:remove(i)
+  while true do
+    for i,v in pairs(tasks) do
+      if tasks[i].coro then
+        if filters[i] == nil or filters[i] == eventData[1] or filters[i] == "" then
+          local ok, param = coroutine.resume(tasks[i].coro, table.unpack(eventData))
+          if not ok then
+            kernel.log("Task " .. (tasks[i].id or tostring(tasks[i].pid) or tostring(i)) .. " died: " .. param)
+            tasks:remove(i)
+            if filters[i] then
+              filters:remove(i)
+            end
+          else
+            filters[i] = param
           end
-        else
-          filters[i] = param
         end
       end
     end
+    eventData = {event.pull(nil, 0.5)}
   end
-  eventData = {event.pull(nil, 0.5)}
 end
