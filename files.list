@@ -1,6 +1,7 @@
 init.lua
 sbin/
 sbin/init.lua
+sbin/openrc.lua
 lib/
 lib/tokenize.lua
 lib/colors.lua
@@ -8,8 +9,11 @@ lib/motd/
 lib/motd/motdlist.lua
 lib/require/
 lib/require/serialize.lua
+lib/services/
+lib/services/logd.lua
 etc/
 etc/hostname.lua
+etc/openrc.cfg
 etc/init.d/
 etc/init.d/00_base.lua
 etc/init.d/10_event.lua
@@ -19,6 +23,7 @@ etc/init.d/40_tables.lua
 etc/init.d/50_modules.lua
 etc/init.d/60_networking.lua
 etc/init.d/70_filesystem.lua
+etc/init.d/80_multithreading.lua
 boot/
 boot/kernel.lua
 boot/libs/
@@ -50,3 +55,4 @@ bin/pastebin.lua
 bin/wget.lua
 usr/bin/
 usr/bin/lua.lua
+var/log/
