@@ -1,7 +1,7 @@
 -- A kernel. --
 -- (c) 2020 Ocawesome101
 
-local KERNEL_VERSION = "Open Kernel 0.5.0"
+local KERNEL_VERSION = "Open Kernel 1.0.0"
 local printLogs = true
 
 -- Set up proxy stuff
