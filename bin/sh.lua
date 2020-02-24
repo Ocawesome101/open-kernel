@@ -4,7 +4,7 @@ shell = {}
 local pwd = "/"
 shell.pwd = function()return pwd end
 shell.setPwd = function(new)pwd = new or "/" end
-shell.version = function() return "Open Shell 0.5.0" end
+shell.version = function() return "Open Shell 1.0.0" end
 local exit = false
 shell.exit = function() exit = true end
 shell.path = function() return "/bin:/sbin:/usr/bin" end
