@@ -85,7 +85,7 @@ function os.start()
       if filters[i] == nil or filters[i] == eventData[1] or filters[i] == "" then
         local ok, param = coroutine.resume(tasks[i].coro, table.unpack(eventData))
         if not ok then
-          kernel.log("Task " .. (tasks[i].name or tostring(tasks[i].pid) or tostring(i)) .. " died: " .. param)
+          kernel.log("Task " .. (tasks[i].id or tostring(tasks[i].pid) or tostring(i)) .. " died: " .. param)
           tasks:remove(i)
           if filters[i] then
             filters:remove(i)
