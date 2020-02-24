@@ -72,7 +72,7 @@ term.setTextColor(colors.white)
 
 pcall(runCommand, "motd")
 
-local tHistory = table.new({""})
+local tHistory = table.new("")
 
 while not exit do
   term.setTextColor(colors.red)
