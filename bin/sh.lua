@@ -9,8 +9,9 @@ local exit = false
 shell.exit = function() exit = true end
 shell.path = function() return "/bin:/sbin:/usr/bin" end
 
-local tokenize = require("tokenize")
+local tokenize, e = require("tokenize")
 local network = network or require("network")
+if not tokenize then print(e) sleep(10) end
 
 function shell.resolvePath(path, strict)
   if path == ".." then
@@ -34,9 +35,9 @@ end
 local function runCommand(...)
   local cmd = table.concat({...}, " ")
   local toExec = ""
-  local words = tokenize(cmd)
+  local words = tokenize(" ", cmd)
   local head = words[1]:sub(1,1)
-  local paths = tokenize(shell.path(), ":")
+  local paths = tokenize(":", shell.path())
   for i=1, #paths, 1 do
     if fs.exists(paths[i] .. "/" .. words[1] .. ".lua") then
       toExec = paths[i] .. "/" .. words[1] .. ".lua"

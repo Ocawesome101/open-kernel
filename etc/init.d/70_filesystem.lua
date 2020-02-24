@@ -1,12 +1,9 @@
 -- Further enhance the filesystem API -- 
 
-if fs.isDir then -- We're probably running on ComputerCraft
-  return
-end
-
 local component = require("component")
 
 kernel.log("Getting root filesystem address")
+
 -- Get the root filesystem address
 local eeprom = component.list("eeprom")()
 local rootfsAddress = component.invoke(eeprom, "getData")
@@ -14,12 +11,7 @@ local rootfsAddress = component.invoke(eeprom, "getData")
 local serialize = require("serialize")
 
 kernel.log("Initializing mount system")
-local mounts = table.new({
-  {
-    path = "/",
-    addr = rootfsAddress
-  }
-})
+local mounts = table.new()
 
 function fs.mount(addr, path)
   if addr:find("/") then
@@ -31,10 +23,12 @@ function fs.mount(addr, path)
       return true
     end
   end
+  kernel.log("Mounting filesystem " .. addr .. " at " .. path)
   fs.makeDirectory(path)
   mounts:insert({
     ["path"] = path,
-    ["addr"] = addr
+    ["addr"] = addr,
+    ["proxy"] = component.proxy(addr) -- TODO: make this do something
   })
   return true
 end
@@ -48,6 +42,7 @@ function fs.unmount(filesystem) -- Supports unmounting by address or by path
   if filesystem == "/" or filesystem == rootfsAddress then
     return false, "Cannot unmount the root filesystem"
   end
+  kernel.log("Unmounting " .. filesystem)
   for i=1, #mounts, 1 do
     if mounts[i].path == filesystem then
       remove(mounts[i].path)
@@ -192,6 +187,8 @@ fs.makeDirectory("/mnt")
 if not fs.exists("/tmp") then
   fs.makeDirectory("/tmp")
 end
+
+fs.mount(rootfsAddress, "/")
 
 kernel.log("Mounting external filesystems")
 for addr, ctype in component.list("filesystem") do

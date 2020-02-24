@@ -3,14 +3,14 @@
 local panic = ...
 
 if sh then
-  error("Init is already running!")
+  error("OpenInit is already running!")
   return false
 end
 
 -- Messy
 write("\n")
 term.setTextColor(0x6699FF)
-write("  OCInit ")
+write("  OpenInit ")
 term.setTextColor(0xFFFFFF)
 write("starting up ")
 term.setTextColor(0xFFFF00)
@@ -27,16 +27,32 @@ for i=1, #initd, 1 do
   if not ok then
     panic(err)
   end
-  ok()
+  local s, r = pcall(ok)
+  if not s then
+    panic(r)
+  end
+end
+
+kernel.log("Starting OpenRC")
+local ok, err = loadfile("/sbin/openrc.lua")
+if not ok then
+  panic("OpenRC crashed! " .. err)
+end
+local status, ret = pcall(ok)
+if not status then
+  panic("OpenRC crashed! " .. ret)
 end
 
 kernel.log("Starting shell")
+kernel.hideLogs()
+
 while true do
   local ok, err = loadfile("/bin/sh.lua")
   if not ok then
     printError(err)
     break
   else
-    ok()
+    os.spawn("shell", ok)
+    os.start()
   end
 end

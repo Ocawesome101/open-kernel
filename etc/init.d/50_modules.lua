@@ -29,7 +29,7 @@ end
 local tokenize = ok()
 
 function module.search(lib)
-  local paths = tokenize(module.path, ";")
+  local paths = tokenize(";", module.path)
   for i=1, #paths, 1 do
     if fs.exists(paths[i] .. "/" .. lib .. ".lua") then
       return paths[i] .. "/" .. lib .. ".lua"

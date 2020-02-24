@@ -2,6 +2,7 @@
 -- (c) 2020 Ocawesome101
 
 local KERNEL_VERSION = "Open Kernel 0.5.0"
+local printLogs = true
 
 -- Set up proxy stuff
 fs = component.proxy(component.invoke(component.list("eeprom")(), "getData"))
@@ -92,8 +93,17 @@ local function time() -- Properly format the computer's uptime for printing
   return r
 end
 
+if not fs.exists("/var/log") then
+  fs.makeDirectory("/var/log")
+end
+pcall(function()fs.rename("/var/log/kernel.log","var/log/kernel.log.old")end)
+local logHandle = fs.open("/var/log/kernel.log", "w")
 local function status(msg)
-  print("[" .. time() .. "] " .. msg)
+  local m = "[" .. time() .. "] " .. msg
+  if printLogs then
+    print(m)
+  end
+  fs.write(logHandle, m .. "\n")
 end
 
 local reasons = {
@@ -104,17 +114,26 @@ local reasons = {
   "This kernel was made by Ocawesome101"
 }
 
+local pullSignal, shutdown, beep = computer.pullSignal, computer.shutdown, computer.beep
 local function panic(reason)
   local reason = reason or reasons[math.random(1,5)]
   local w,h = term.getSize()
-  print(("="):rep(w))
+  if kernel and kernel.showLogs then
+    kernel.showLogs()
+  end
+  if printLogs then
+    print(("="):rep(w))
+  end
   status("KERNEL PANIC: " .. reason)
   status("Press S to shut down your computer.")
-  print(("="):rep(w))
+  if printLogs then
+    print(("="):rep(w))
+  end
+  beep(240, 1)
   while true do
-    local e, _, id = computer.pullSignal()
+    local e, _, id = pullSignal()
     if e == "key_down" and string.char(id) == "s" then
-      computer.shutdown(false)
+      shutdown(false)
     end
   end
 end
@@ -145,7 +164,17 @@ status("Setting up kernel hooks")
 _G.kernel = {}
 kernel.log = status
 kernel.version = function()return KERNEL_VERSION end
-kernel.shutdown = computer.shutdown
+kernel.shutdown = function(b)
+  fs.close(logHandle)
+  shutdown(b)
+end
+computer.shutdown = kernel.shutdown
+kernel.showLogs = function()
+  printLogs = true
+end
+kernel.hideLogs = function()
+  printLogs = false
+end
 
 status("Loading init from /sbin/init.lua")
 local ok, err = loadfile("/sbin/init.lua")
